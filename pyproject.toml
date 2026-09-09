@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghost-atlas-packet-os"
+version = "0.1.0"
+description = "Canonical atomic work substrate for the Ghost Atlas estate"
+requires-python = ">=3.11"
+authors = [{name = "Atlas-Ascend"}]
+dependencies = []
+
+[project.scripts]
+packet-os = "packet_os.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
