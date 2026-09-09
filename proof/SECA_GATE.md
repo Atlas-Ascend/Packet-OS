@@ -1,21 +1,38 @@
 # SECA Gate — Packet OS v0.1
 
-## Gate checklist
+## Automated/source gate checklist
 
-- [ ] Python package compiles/imports
-- [ ] all unit tests pass
-- [ ] illegal transition rejection proven
-- [ ] non-SECA verification rejection proven
-- [ ] missing-evidence rejection proven
-- [ ] CLI demo reaches COMPLETED through VERIFIED
-- [ ] Docker image builds
-- [ ] no secret material committed
-- [ ] authority boundaries match Build Truth 00
-- [ ] estate wiring references canonical repositories
-- [ ] candidate commit/CI evidence recorded
+- [x] Python package compiles/imports
+- [x] all unit tests pass
+- [x] illegal transition rejection proven
+- [x] non-SECA verification rejection proven
+- [x] missing-evidence rejection proven
+- [x] CLI demo reaches COMPLETED through VERIFIED
+- [x] Docker image builds
+- [x] no secret material intentionally committed in candidate source
+- [x] authority boundaries match Build Truth 00
+- [x] estate wiring references canonical repositories
+- [x] candidate commit/CI evidence recorded
 
-## Promotion decision
+**CI evidence:** GitHub Actions run `34405077969`, job `verify` — SUCCESS.
 
-Current: **NOT YET PROMOTED**
+## External SECA decision
 
-SECA owns the final promotion decision. Packet OS cannot modify this checklist as a substitute for external verification.
+`Atlas-Ascend/SECA#1`: **CONDITIONAL**
+
+### Source-promotion gate
+
+**PASS**, contingent on the receipt-update branch remaining CI-green.
+
+### Production-runtime gate
+
+**BLOCKED** — Render Hobby workspace is at the 25-service limit. Deployment dependency is routed to `Atlas-Ascend/Ghost-Atlas-Release-Deployment-Control-Plane#5`.
+
+Production PASS still requires:
+
+- [ ] deployed Packet OS artifact/commit receipt
+- [ ] `/healthz` returns HTTP 200
+- [ ] `/capabilities` returns the declared authority boundary
+- [ ] deployment/runtime evidence linked back to SECA
+
+Packet OS cannot convert this conditional decision into a production PASS on its own.
