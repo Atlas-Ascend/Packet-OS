@@ -1,0 +1,27 @@
+schema: ghost-atlas.hypernet.node/v1
+node_id: packet-os
+repository: Atlas-Ascend/Packet-OS
+lifecycle: seed
+plane: work-substrate
+canonical_role: atomic-task-packet-substrate
+authority:
+  owns:
+    - packet-schema
+    - task-state-contract
+    - handoff-envelope
+    - evidence-requirements
+  does_not_own:
+    - executive-authorization
+    - worker-selection
+    - finish-truth
+upstream:
+  - Janus-Prime
+  - Atlas-Mind-LLM
+downstream:
+  - workforce-spine
+  - Crowngrid
+  - Ghost-Atlas-Distributed-Agentic-Organism
+failure_route:
+  implementation: DEVOS
+  quality: SECA
+proof_gate: SECA
