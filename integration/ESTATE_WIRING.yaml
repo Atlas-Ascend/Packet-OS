@@ -1,0 +1,94 @@
+schema: ghost-atlas.packet-os.estate-wiring/v2
+packet_os: Atlas-Ascend/Packet-OS
+subsystems:
+  atomic_graph: PacketGraph
+  storm_scheduler: PacketStorm
+  lane_scheduler: LaneScheduler
+  quality_governor: GAQC
+routes:
+  - producer: Atlas-Ascend/Atlas-Mind-LLM
+    consumer: Atlas-Ascend/Janus-Prime
+    contract: packet-proposal
+    note: cognition proposes; JANUS authorizes
+  - producer: Atlas-Ascend/MAAT-Universal-CaseGraph
+    consumer: Atlas-Ascend/Packet-OS
+    contract: case-context-reference
+    note: Packet OS stores references, not CaseGraph authority
+  - producer: Atlas-Ascend/Janus-Prime
+    consumer: Atlas-Ascend/Packet-OS
+    contract: authorized-intent
+    event: packet.authorized
+  - producer: Atlas-Ascend/Packet-OS#PacketGraph
+    consumer: Atlas-Ascend/Packet-OS#PacketStorm
+    contract: atomic-dag
+    note: dependency-ready atoms only
+  - producer: Atlas-Ascend/Packet-OS#PacketStorm
+    consumer: Atlas-Ascend/workforce-spine
+    contract: packet/v2
+    event: packet.queued
+    note: lane admission is bounded; Workforce Spine still selects workers
+  - producer: Atlas-Ascend/workforce-spine
+    consumer: Atlas-Ascend/Packet-OS
+    contract: worker-claim
+    event: packet.claimed
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: Atlas-Ascend/Crowngrid
+    contract: capability-request-reference
+    note: CrownGrid routes capabilities; Packet OS does not
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: Atlas-Ascend/Ghost-Atlas-Distributed-Agentic-Organism
+    contract: bounded-work-packet
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: Atlas-Ascend/Ghost-Atlas-Software-Factory-End-to-End-SDLC-Control-Plane
+    contract: build-packet
+    condition: metadata.kind == software-build
+  - producer: execution-organ
+    consumer: Atlas-Ascend/Packet-OS#GAQC
+    contract: review-candidate
+    condition: state == REVIEW
+  - producer: Atlas-Ascend/Packet-OS#GAQC
+    consumer: Atlas-Ascend/DEVOS
+    contract: quality-rework
+    condition: disposition == REWORK
+  - producer: Atlas-Ascend/Packet-OS#GAQC
+    consumer: Atlas-Ascend/SECA
+    contract: quality-pass-or-quarantine
+    condition: disposition in [BYPASS_TO_SECA, PASS_TO_SECA, QUARANTINE]
+  - producer: Atlas-Ascend/Packet-OS#GAQC
+    consumer: Atlas-Ascend/Janus-Prime
+    contract: critical-quality-escalation
+    condition: disposition == ESCALATE
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: Atlas-Ascend/Ghost-Atlas-Estate-Event-Gateway
+    contract: event/v1
+    event: packet.*
+  - producer: Atlas-Ascend/Ghost-Atlas-Estate-Event-Gateway
+    consumer: Atlas-Ascend/Ghost-Atlas-Runtime-Observatory
+    contract: mirrored-runtime-event
+    note: storm and lane snapshots are observability payloads
+  - producer: execution-organ
+    consumer: Atlas-Ascend/DEVOS
+    contract: implementation-failure
+    event: packet.failed
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: Atlas-Ascend/SECA
+    contract: verification-request
+    condition: state == REVIEW
+  - producer: Atlas-Ascend/SECA
+    consumer: Atlas-Ascend/Packet-OS
+    contract: verification-result
+    event: packet.verified
+  - producer: Atlas-Ascend/Packet-OS
+    consumer: ProofGrid
+    contract: packet-storm-proof-receipt
+    condition: state == COMPLETED
+invariants:
+  - JANUS retains executive authorization
+  - Workforce Spine retains worker selection and worker scheduling policy
+  - Packet Storm controls only bounded packet admission and lane capacity
+  - CrownGrid retains capability routing
+  - GAQC may inspect, rework, quarantine, and escalate but cannot verify or complete packets
+  - DEVOS owns implementation remediation
+  - SECA retains finish truth
+  - dependency release requires upstream COMPLETED truth
+  - lane saturation produces backpressure, never silent packet loss

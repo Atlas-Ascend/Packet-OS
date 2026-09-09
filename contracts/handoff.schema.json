@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ghostatlas.invalid/contracts/packet-os/handoff/v1",
+  "title": "Packet OS Handoff v1",
+  "type": "object",
+  "required": ["handoff_id", "packet_id", "source", "target", "reason", "contract_version", "timestamp"],
+  "properties": {
+    "handoff_id": {"type": "string"},
+    "packet_id": {"type": "string"},
+    "source": {"type": "string"},
+    "target": {"type": "string"},
+    "reason": {"type": "string"},
+    "contract_version": {"const": "v1"},
+    "timestamp": {"type": "string"}
+  },
+  "additionalProperties": false
+}

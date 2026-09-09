@@ -1,0 +1,49 @@
+name: packet-os-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install -e .
+      - name: Compile
+        run: python -m compileall -q src tests
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Governed lifecycle demo
+        run: |
+          python -m packet_os.cli demo > /tmp/packet-os-demo.json
+          python - <<'PY'
+          import json
+          data = json.load(open('/tmp/packet-os-demo.json'))
+          assert data['packet']['state'] == 'COMPLETED'
+          print('demo proof: COMPLETED')
+          PY
+      - name: Atomic packet storm demo
+        run: |
+          python -m packet_os.cli storm-demo > /tmp/packet-storm-demo.json
+          python - <<'PY'
+          import json
+          data = json.load(open('/tmp/packet-storm-demo.json'))
+          assert data['packet_count'] == 24
+          assert data['lanes']['build']['in_flight'] == 4
+          assert data['lanes']['research']['in_flight'] == 2
+          assert data['lanes']['build']['queued'] == 8
+          assert data['lanes']['research']['queued'] == 10
+          assert data['metrics']['claimed'] == 6
+          print('packet storm proof: bounded parallelism PASS')
+          PY
+      - name: Docker build
+        run: docker build -t packet-os:${{ github.sha }} .
