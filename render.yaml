@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: ghost-atlas-packet-os
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    autoDeploy: false
