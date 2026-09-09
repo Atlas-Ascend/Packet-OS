@@ -1,7 +1,7 @@
 schema: ghost-atlas.hypernet.node/v1
 node_id: packet-os
 repository: Atlas-Ascend/Packet-OS
-version: 0.1.0
+version: 0.2.0
 lifecycle: active-candidate
 plane: work-substrate
 canonical_role: atomic-task-packet-substrate
@@ -16,6 +16,7 @@ authority:
     - executive-authorization
     - worker-selection
     - capability-routing
+    - quantum-execution
     - finish-truth
 upstream:
   - Atlas-Ascend/Janus-Prime
@@ -29,6 +30,10 @@ integration:
   event_gateway: Atlas-Ascend/Ghost-Atlas-Estate-Event-Gateway
   observatory: Atlas-Ascend/Ghost-Atlas-Runtime-Observatory
   software_factory: Atlas-Ascend/Ghost-Atlas-Software-Factory-End-to-End-SDLC-Control-Plane
+  quantum_compute_repository: Atlas-Ascend/Ghost-Atlas-Research-Institute
+  quantum_compute_path: labs/gaqc3
+  quantum_job_schema: labs/gaqc3/contracts/quantum-job.schema.json
+  quantum_route: Packet-OS -> Crowngrid -> GAQC-3.0
 failure_route:
   implementation: Atlas-Ascend/DEVOS
   quality: Atlas-Ascend/SECA
