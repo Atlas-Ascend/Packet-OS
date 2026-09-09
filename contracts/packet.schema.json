@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ghostatlas.invalid/contracts/packet-os/packet/v1",
+  "title": "Packet OS Packet v1",
+  "type": "object",
+  "required": ["packet_id", "objective", "source", "state", "acceptance_criteria", "evidence_requirements", "created_at", "updated_at"],
+  "properties": {
+    "packet_id": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "priority": {"type": "integer", "minimum": 0, "maximum": 100},
+    "state": {"enum": ["DRAFT", "AUTHORIZED", "QUEUED", "CLAIMED", "RUNNING", "BLOCKED", "REVIEW", "VERIFIED", "COMPLETED", "FAILED", "CANCELLED"]},
+    "authorization_ref": {"type": ["string", "null"]},
+    "assigned_to": {"type": ["string", "null"]},
+    "acceptance_criteria": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "inputs": {"type": "object"},
+    "metadata": {"type": "object"},
+    "evidence_requirements": {"type": "array", "items": {"type": "object", "required": ["kind", "description", "required"]}},
+    "evidence": {"type": "array"},
+    "history": {"type": "array"},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"}
+  },
+  "additionalProperties": true
+}
