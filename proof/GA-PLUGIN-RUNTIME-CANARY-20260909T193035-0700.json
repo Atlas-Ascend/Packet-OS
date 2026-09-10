@@ -1,0 +1,18 @@
+{
+  "event_id": "GA-PLUGIN-RUNTIME-CANARY-20260909T193035-0700",
+  "packet_id": "PKT-GA-PLUGIN-RUNTIME-001",
+  "correlation_id": "COR-GA-PLUGIN-RUNTIME-001",
+  "parent_event": "GA-PLUGIN-FABRIC-20260909T185600-0700",
+  "objective": "Exercise the connected plugin capability fabric with one bounded write and multiple read probes, then close proof and feedback.",
+  "state": "RUNNING",
+  "authorization": "ARCHITECT_EXPLICIT_EXECUTION_ONLY",
+  "provider_results": {
+    "gmail": {"capability":"communication.email.read","operation":"READ","result":"PASS","evidence":"INBOX label query returned successfully"},
+    "google_calendar": {"capability":"schedule.calendar.read","operation":"READ","result":"PASS","evidence":"calendar listing returned successfully"},
+    "google_drive": {"capability":"knowledge.file.read","operation":"READ","result":"PASS","evidence":"My Drive root listing returned successfully"},
+    "base44": {"capability":"app.sandbox","operation":"READ","result":"PASS","evidence":"owned app listing returned successfully"},
+    "github": {"capability":"scm.repository.write","operation":"CREATE","result":"IN_PROGRESS","evidence":"this receipt file is the bounded write canary"}
+  },
+  "secret_policy": "No raw credentials or provider-private payload content recorded.",
+  "next": "seal GitHub commit evidence, SECA/Medusa verification, Thoth provenance, MAAT/NAVI/JANUS feedback"
+}
