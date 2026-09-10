@@ -4,15 +4,26 @@
   "correlation_id": "COR-GA-PLUGIN-RUNTIME-001",
   "parent_event": "GA-PLUGIN-FABRIC-20260909T185600-0700",
   "objective": "Exercise the connected plugin capability fabric with one bounded write and multiple read probes, then close proof and feedback.",
-  "state": "RUNNING",
+  "state": "COMPLETED",
   "authorization": "ARCHITECT_EXPLICIT_EXECUTION_ONLY",
   "provider_results": {
     "gmail": {"capability":"communication.email.read","operation":"READ","result":"PASS","evidence":"INBOX label query returned successfully"},
     "google_calendar": {"capability":"schedule.calendar.read","operation":"READ","result":"PASS","evidence":"calendar listing returned successfully"},
     "google_drive": {"capability":"knowledge.file.read","operation":"READ","result":"PASS","evidence":"My Drive root listing returned successfully"},
     "base44": {"capability":"app.sandbox","operation":"READ","result":"PASS","evidence":"owned app listing returned successfully"},
-    "github": {"capability":"scm.repository.write","operation":"CREATE","result":"IN_PROGRESS","evidence":"this receipt file is the bounded write canary"}
+    "github": {"capability":"scm.repository.write","operation":"CREATE","result":"PASS","evidence":"f752b37c2c7a8c065d004327294f0fad2a07792b"}
   },
-  "secret_policy": "No raw credentials or provider-private payload content recorded.",
-  "next": "seal GitHub commit evidence, SECA/Medusa verification, Thoth provenance, MAAT/NAVI/JANUS feedback"
+  "closed_loop_receipts": {
+    "seca": "e6f33f5b4a340788d6187449f6038b3fafe48ff8",
+    "medusa": "1b02d580ba5ec62595332d1078134d24c912db74",
+    "thoth": "d1d5ca8445ffb05d7609bbecc3d3e4348a95841f",
+    "maat": "2bd1f9bc8073a2e1286f5991a015e611259a8b8e",
+    "navi": "a8331572273a1ea487eebe64ed4bb59ee6446845",
+    "janus": "dd2aabdd693d9bdfaffd1b2bb0f9b58599836154"
+  },
+  "seca_gate": "PASSED",
+  "medusa_gate": "PASSED",
+  "proof_state": "EVIDENCE_BACKED",
+  "feedback_state": "CLOSED_LOOP_COMPLETE",
+  "secret_policy": "No raw credentials or provider-private payload content recorded."
 }
