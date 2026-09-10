@@ -7,10 +7,10 @@
   "state": "COMPLETED",
   "authorization": "ARCHITECT_EXPLICIT_EXECUTION_ONLY",
   "provider_results": {
-    "gmail": {"capability":"communication.email.read","operation":"READ","result":"PASS","evidence":"INBOX label query returned successfully"},
-    "google_calendar": {"capability":"schedule.calendar.read","operation":"READ","result":"PASS","evidence":"calendar listing returned successfully"},
-    "google_drive": {"capability":"knowledge.file.read","operation":"READ","result":"PASS","evidence":"My Drive root listing returned successfully"},
-    "base44": {"capability":"app.sandbox","operation":"READ","result":"PASS","evidence":"owned app listing returned successfully"},
+    "gmail": {"capability":"communication.email.read","operation":"READ","result":"PASS","evidence":"provider read probe returned successfully"},
+    "google_calendar": {"capability":"schedule.calendar.read","operation":"READ","result":"PASS","evidence":"provider read probe returned successfully"},
+    "google_drive": {"capability":"knowledge.file.read","operation":"READ","result":"PASS","evidence":"provider read probe returned successfully"},
+    "base44": {"capability":"app.sandbox","operation":"READ","result":"PASS","evidence":"provider read probe returned successfully"},
     "github": {"capability":"scm.repository.write","operation":"CREATE","result":"PASS","evidence":"f752b37c2c7a8c065d004327294f0fad2a07792b"}
   },
   "closed_loop_receipts": {
@@ -20,6 +20,18 @@
     "maat": "2bd1f9bc8073a2e1286f5991a015e611259a8b8e",
     "navi": "a8331572273a1ea487eebe64ed4bb59ee6446845",
     "janus": "dd2aabdd693d9bdfaffd1b2bb0f9b58599836154"
+  },
+  "live_runtime": {
+    "service": "vishvarupa-organism",
+    "deploy_id": "dep-dah1fvi1qmas73c5urgg",
+    "deploy_commit": "7f44630ea4939e97a3e88667e11245253cb3df37",
+    "deploy_state": "LIVE",
+    "broker_state": {"providers":11,"routable_providers":8,"capabilities":66},
+    "invocation_id": "PINV-2f0f9938-53cc-496c-809f-aa46a8a4af95",
+    "proof_id": "PG-PLUGIN-d22f0f79-3fcf-4deb-acad-2c94150ecaab",
+    "provider_id": "github",
+    "evidence_class": "EXTERNAL_PROVIDER_RECEIPT",
+    "feedback_state": "CLOSED_LOOP_COMPLETE"
   },
   "seca_gate": "PASSED",
   "medusa_gate": "PASSED",
