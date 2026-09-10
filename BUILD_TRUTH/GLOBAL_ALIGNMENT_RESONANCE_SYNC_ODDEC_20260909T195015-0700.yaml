@@ -1,0 +1,10 @@
+schema: ghost-atlas.global-sync-pointer/v1
+event_id: GLOBAL-ALIGNMENT-RESONANCE-SYNC-ODDEC-20260909T195015-0700
+canonical_manifest: Atlas-Ascend/Ghost-Atlas-Distributed-Agentic-Organism/06-TOPOLOGY/GLOBAL_ALIGNMENT_RESONANCE_SYNC_ODDEC_20260909T195015-0700.yaml
+channel: sacral_flow
+organ: Packet-OS
+state: aligned
+role: atomic-work-packetization
+oddec: full
+handoff_contract: ghost-atlas.handoff/v1
+invariants: [typed_packets, bounded_execution, receipted_handoffs]
