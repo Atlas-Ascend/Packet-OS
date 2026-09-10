@@ -1,0 +1,29 @@
+{
+  "receipt_type": "PACKET_OS_ACCEPTANCE_RECEIPT",
+  "campaign_id": "GARI-RP-010",
+  "canary_id": "GARI-RP-010-CANARY-001",
+  "correlation_id": "GA-TRACE-RP010-001",
+  "packet_id": "PKT-GARI-RP010-CANARY-001",
+  "source": "GARI-RP-009 Research Program Compiler",
+  "authorization_ref": "Janus-Odin@95badf7b574657d6667ffc5b1317f8806e6de931",
+  "objective": "Prove one authorized GARI research packet can traverse the estate through independently recorded acknowledgements without collapsing authority or fabricating runtime completion.",
+  "packet_os_contract": "packet/v1",
+  "adapter_class": "github_repository_receipt",
+  "state": "AUTHORIZED",
+  "acceptance_criteria": [
+    "correlation ID preserved across every hop",
+    "each organ writes an independent append-only acknowledgement",
+    "no hop is reported complete before its receipt exists",
+    "no destructive action, canon supersession, or scientific-truth promotion occurs",
+    "final proof chains all receipt commit SHAs"
+  ],
+  "evidence_requirements": [
+    {"kind":"commit_receipt","description":"Git commit created in each participating organ repository","required":true},
+    {"kind":"correlation","description":"Same canary and correlation identifiers across receipts","required":true},
+    {"kind":"finish_truth","description":"Final ProofGrid-style receipt only after all required acknowledgements exist","required":true}
+  ],
+  "accepted": true,
+  "execution_completed": false,
+  "next_hop": "Workforce Spine",
+  "recorded_at": "2026-09-09T19:43:20-07:00"
+}
