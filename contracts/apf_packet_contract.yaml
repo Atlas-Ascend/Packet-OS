@@ -1,7 +1,24 @@
 schema: ghost-atlas.packet-os.apf/v1
 producer: JANUS-ATLAS-PROMPT-FABRIC
 consumer: Packet-OS
-required: [packet_id,objective,inputs,authority,executor,dependencies,actions,tests,proof,rollback,completion_condition]
+required:
+  - packet_id
+  - correlation_id
+  - run_id
+  - objective
+  - inputs
+  - authority
+  - authorization_ref
+  - executor
+  - dependencies
+  - actions
+  - tests
+  - proof
+  - evidence_links
+  - replay_policy
+  - rollback
+  - workforce_handoff
+  - completion_condition
 constraints:
   atomic: true
   bounded: true
@@ -9,5 +26,24 @@ constraints:
   idempotent_preferred: true
   explicit_authority_required: true
   receipt_required: true
-failure_output: [failed_stage,failed_assertion,artifact,diagnostic_evidence,repair_packet,resume_point]
-completion: packet_is_complete_only_when_tests_and_required_proof_pass
+  correlation_immutable: true
+  run_identity_required_before_dispatch: true
+  replay_requires_same_packet_and_correlation: true
+  replay_must_not_duplicate_completed_effect: true
+  rollback_must_reference_prior_effect_or_artifact: true
+workforce_handoff:
+  required: [packet_id, correlation_id, run_id, authorization_ref, owner, destination, acknowledgement_required]
+  acknowledgement_required: true
+  completion_requires_downstream_receipt: true
+replay_policy:
+  default: deny_after_completed
+  retry_requires_explicit_attempt_and_prior_receipt: true
+  new_effect_requires_new_packet_id: true
+failure_output:
+  - failed_stage
+  - failed_assertion
+  - artifact
+  - diagnostic_evidence
+  - repair_packet
+  - resume_point
+completion: packet_is_complete_only_when_tests_required_proof_and_downstream_receipts_pass
