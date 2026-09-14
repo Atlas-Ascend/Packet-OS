@@ -5,6 +5,7 @@ required:
   - packet_id
   - correlation_id
   - run_id
+  - attempt
   - state
   - objective
   - inputs
@@ -52,24 +53,29 @@ lifecycle:
     - packet_id
     - correlation_id
     - run_id
+    - attempt
     - from_state
     - to_state
     - occurred_at
     - evidence_ref
   guards:
     AUTHORIZED: authorization_ref_required
+    READY: retry_lineage_required_when_attempt_gt_1
     DISPATCHED: workforce_handoff_required
     ACKNOWLEDGED: downstream_ack_required
     RUNNING: observed_executor_receipt_required
     VERIFYING: execution_receipt_required
     COMPLETED: proof_and_downstream_receipts_required
 workforce_handoff:
-  required: [packet_id, correlation_id, run_id, authorization_ref, owner, destination, acknowledgement_required]
+  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, owner, destination, acknowledgement_required]
   acknowledgement_required: true
   completion_requires_downstream_receipt: true
 replay_policy:
   default: deny_after_completed
   retry_requires_explicit_attempt_and_prior_receipt: true
+  retry_requires_prior_packet_state: [FAILED, BLOCKED]
+  retry_attempt_must_increment: true
+  retry_of_receipt_required_after_first_attempt: true
   new_effect_requires_new_packet_id: true
 failure_output:
   - failed_stage
