@@ -5,6 +5,7 @@ required:
   - packet_id
   - correlation_id
   - run_id
+  - state
   - objective
   - inputs
   - authority
@@ -31,6 +32,37 @@ constraints:
   replay_requires_same_packet_and_correlation: true
   replay_must_not_duplicate_completed_effect: true
   rollback_must_reference_prior_effect_or_artifact: true
+  state_transition_receipt_required: true
+lifecycle:
+  initial_state: ADMITTED
+  terminal_states: [COMPLETED, FAILED, BLOCKED, ROLLED_BACK]
+  transitions:
+    ADMITTED: [AUTHORIZED, BLOCKED]
+    AUTHORIZED: [READY, BLOCKED]
+    READY: [DISPATCHED, BLOCKED]
+    DISPATCHED: [ACKNOWLEDGED, BLOCKED]
+    ACKNOWLEDGED: [RUNNING, BLOCKED]
+    RUNNING: [VERIFYING, FAILED, BLOCKED]
+    VERIFYING: [COMPLETED, FAILED, BLOCKED]
+    FAILED: [READY, ROLLED_BACK]
+    BLOCKED: [READY, ROLLED_BACK]
+    COMPLETED: []
+    ROLLED_BACK: []
+  transition_receipt_required:
+    - packet_id
+    - correlation_id
+    - run_id
+    - from_state
+    - to_state
+    - occurred_at
+    - evidence_ref
+  guards:
+    AUTHORIZED: authorization_ref_required
+    DISPATCHED: workforce_handoff_required
+    ACKNOWLEDGED: downstream_ack_required
+    RUNNING: observed_executor_receipt_required
+    VERIFYING: execution_receipt_required
+    COMPLETED: proof_and_downstream_receipts_required
 workforce_handoff:
   required: [packet_id, correlation_id, run_id, authorization_ref, owner, destination, acknowledgement_required]
   acknowledgement_required: true
