@@ -1,0 +1,18 @@
+{
+  "schema":"ghost-atlas.packet-os.gari-research-packet-binding.v1",
+  "status":"SOURCE_BOUND_PENDING_RUNTIME_RECEIPT",
+  "packet_owner":"Atlas-Ascend/Packet-OS",
+  "research_owner":"Atlas-Ascend/Ghost-Atlas-Research-Institute",
+  "authorization_owner":"JANUS/ODIN",
+  "accepted_sources":["GARI RP-009 Research Program Compiler","GARI RP-013 Protocol Compiler","authorized GARI research loop"],
+  "canonical_contracts":["contracts/packet.schema.json","contracts/event.schema.json","contracts/handoff.schema.json","contracts/storm.schema.json"],
+  "required_packet_fields":["packet_id","research_object_id","correlation_id","capability","authority","evidence_requirements"],
+  "required_return_fields":["packet_id","correlation_id","state","actor","system","artifact_refs","evidence_refs"],
+  "truth_boundary":{
+    "gari_executes_packet":false,
+    "packet_created_means_work_executed":false,
+    "packet_closed_means_scientific_validation":false,
+    "authorization_required_before_execution":true
+  },
+  "reciprocal_contract":"Atlas-Ascend/Ghost-Atlas-Research-Institute:contracts/gari_estate_interface_federation_v1.json"
+}
