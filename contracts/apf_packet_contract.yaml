@@ -32,6 +32,7 @@ constraints:
   run_identity_required_before_dispatch: true
   workforce_spine_selects_executor: true
   executor_must_not_be_required_before_workforce_claim: true
+  workforce_handoff_requires_ready_transition_receipt_ref: true
   replay_requires_same_packet_and_correlation: true
   replay_must_not_duplicate_completed_effect: true
   rollback_must_reference_prior_effect_or_artifact: true
@@ -64,14 +65,14 @@ lifecycle:
   guards:
     AUTHORIZED: authorization_ref_required
     READY: retry_lineage_required_when_attempt_gt_1
-    DISPATCHED: workforce_handoff_required
+    DISPATCHED: workforce_handoff_and_ready_transition_receipt_required
     ACKNOWLEDGED: downstream_ack_required
     RUNNING: observed_executor_receipt_required
     VERIFYING: execution_receipt_required
     COMPLETED: proof_and_downstream_receipts_required
     ROLLED_BACK: rollback_receipt_and_compensation_evidence_required
 workforce_handoff:
-  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, capability_request, owner, destination, acknowledgement_required]
+  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, capability_request, owner, destination, ready_transition_receipt_ref, acknowledgement_required]
   executor_selected_by: WORKFORCE_SPINE
   acknowledgement_required: true
   completion_requires_downstream_receipt: true
