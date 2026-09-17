@@ -13,6 +13,7 @@ required:
   - authorization_ref
   - request_digest
   - policy_snapshot_digest
+  - authorization_expires_at
   - capability_request
   - dependencies
   - actions
@@ -34,6 +35,8 @@ constraints:
   run_identity_required_before_dispatch: true
   authorization_request_digest_required: true
   authorization_policy_snapshot_digest_required: true
+  authorization_expiry_required_before_dispatch: true
+  dispatch_after_authorization_expiry_forbidden: true
   workforce_spine_selects_executor: true
   executor_must_not_be_required_before_workforce_claim: true
   workforce_handoff_requires_ready_transition_receipt_ref: true
@@ -67,16 +70,16 @@ lifecycle:
     - occurred_at
     - evidence_ref
   guards:
-    AUTHORIZED: authorization_ref_request_digest_and_policy_snapshot_required
+    AUTHORIZED: authorization_ref_request_digest_policy_snapshot_and_expiry_required
     READY: retry_lineage_required_when_attempt_gt_1
-    DISPATCHED: workforce_handoff_and_ready_transition_receipt_required
+    DISPATCHED: workforce_handoff_ready_transition_receipt_and_unexpired_authorization_required
     ACKNOWLEDGED: downstream_ack_required
     RUNNING: observed_executor_receipt_required
     VERIFYING: execution_receipt_required
     COMPLETED: proof_and_downstream_receipts_required
     ROLLED_BACK: rollback_receipt_and_compensation_evidence_required
 workforce_handoff:
-  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, request_digest, policy_snapshot_digest, capability_request, owner, destination, ready_transition_receipt_ref, acknowledgement_required]
+  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, request_digest, policy_snapshot_digest, authorization_expires_at, capability_request, owner, destination, ready_transition_receipt_ref, acknowledgement_required]
   executor_selected_by: WORKFORCE_SPINE
   acknowledgement_required: true
   completion_requires_downstream_receipt: true
