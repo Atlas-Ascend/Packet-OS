@@ -3,6 +3,31 @@ from __future__ import annotations
 from .models import PacketState
 
 
+# Atlas Prompt Fabric lifecycle terms are an interface projection over Packet OS.
+# PacketState remains the only executable state machine.
+APF_TO_PACKET_STATES: dict[str, tuple[PacketState, ...]] = {
+    "ADMITTED": (PacketState.DRAFT,),
+    "AUTHORIZED": (PacketState.AUTHORIZED,),
+    "READY": (PacketState.QUEUED,),
+    "DISPATCHED": (PacketState.QUEUED,),
+    "ACKNOWLEDGED": (PacketState.CLAIMED,),
+    "RUNNING": (PacketState.RUNNING,),
+    "VERIFYING": (PacketState.REVIEW, PacketState.VERIFIED),
+    "COMPLETED": (PacketState.COMPLETED,),
+    "FAILED": (PacketState.FAILED,),
+    "BLOCKED": (PacketState.BLOCKED,),
+    "ROLLED_BACK": (PacketState.CANCELLED,),
+}
+
+
+def packet_states_for_apf_state(apf_state: str) -> tuple[PacketState, ...]:
+    normalized = apf_state.strip().upper()
+    try:
+        return APF_TO_PACKET_STATES[normalized]
+    except KeyError as exc:
+        raise ValueError(f"unknown APF lifecycle state: {apf_state}") from exc
+
+
 ALLOWED_TRANSITIONS: dict[PacketState, set[PacketState]] = {
     PacketState.DRAFT: {PacketState.AUTHORIZED, PacketState.CANCELLED},
     PacketState.AUTHORIZED: {PacketState.QUEUED, PacketState.CANCELLED},

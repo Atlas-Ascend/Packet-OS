@@ -48,20 +48,28 @@ constraints:
   rollback_receipt_required_when_invoked: true
   state_transition_receipt_required: true
 lifecycle:
-  initial_state: ADMITTED
-  terminal_states: [COMPLETED, FAILED, BLOCKED, ROLLED_BACK]
-  transitions:
-    ADMITTED: [AUTHORIZED, BLOCKED]
-    AUTHORIZED: [READY, BLOCKED]
-    READY: [DISPATCHED, BLOCKED]
-    DISPATCHED: [ACKNOWLEDGED, BLOCKED]
-    ACKNOWLEDGED: [RUNNING, BLOCKED]
-    RUNNING: [VERIFYING, FAILED, BLOCKED]
-    VERIFYING: [COMPLETED, FAILED, BLOCKED]
-    FAILED: [READY, ROLLED_BACK]
-    BLOCKED: [READY, ROLLED_BACK]
-    COMPLETED: []
-    ROLLED_BACK: []
+  authority: Packet-OS.PacketState
+  semantic_projection_only: true
+  initial_semantic: ADMITTED
+  happy_path_semantic_order: [ADMITTED, AUTHORIZED, READY, DISPATCHED, ACKNOWLEDGED, RUNNING, VERIFYING, COMPLETED]
+  failure_semantics: [BLOCKED, FAILED, ROLLED_BACK]
+  native_mapping:
+    ADMITTED: [DRAFT]
+    AUTHORIZED: [AUTHORIZED]
+    READY: [QUEUED]
+    DISPATCHED: [QUEUED]
+    ACKNOWLEDGED: [CLAIMED]
+    RUNNING: [RUNNING]
+    VERIFYING: [REVIEW, VERIFIED]
+    COMPLETED: [COMPLETED]
+    FAILED: [FAILED]
+    BLOCKED: [BLOCKED]
+    ROLLED_BACK: [CANCELLED]
+  mapping_guards:
+    DISPATCHED: workforce_dispatch_receipt_distinguishes_DISPATCHED_from_READY_while_native_state_remains_QUEUED
+    ACKNOWLEDGED: workforce_claim_acknowledgement_required_for_native_CLAIMED_projection
+    VERIFYING: execution_receipt_required_and_native_REVIEW_or_VERIFIED_remains_authoritative
+    ROLLED_BACK: native_CANCELLED_counts_as_ROLLED_BACK_only_with_rollback_receipt_and_compensation_evidence
   transition_receipt_required:
     - packet_id
     - correlation_id
@@ -97,7 +105,8 @@ rollback_policy:
   requires_prior_effect_or_artifact_ref: true
   requires_prior_receipt_ref: true
   requires_compensation_evidence: true
-  transition_target: ROLLED_BACK
+  native_terminal_state: CANCELLED
+  semantic_projection: ROLLED_BACK
 failure_output:
   - failed_stage
   - failed_assertion
