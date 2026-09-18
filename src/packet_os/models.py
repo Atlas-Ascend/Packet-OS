@@ -7,6 +7,9 @@ from typing import Any
 from uuid import uuid4
 
 
+APF_SOURCE = "JANUS-ATLAS-PROMPT-FABRIC"
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -86,6 +89,14 @@ class Packet:
     inputs: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
     packet_id: str = field(default_factory=lambda: str(uuid4()))
+    correlation_id: str | None = None
+    run_id: str | None = None
+    attempt: int = 1
+    requested_by: str | None = None
+    capability_request: str | None = None
+    request_digest: str | None = None
+    policy_snapshot_digest: str | None = None
+    authorization_expires_at: str | None = None
     state: PacketState = PacketState.DRAFT
     authorization_ref: str | None = None
     assigned_to: str | None = None
@@ -95,6 +106,8 @@ class Packet:
     updated_at: str = field(default_factory=utc_now)
 
     def validate(self) -> None:
+        if not self.packet_id.strip():
+            raise ValueError("packet_id is required")
         if not self.objective.strip():
             raise ValueError("packet objective is required")
         if not self.source.strip():
@@ -103,6 +116,21 @@ class Packet:
             raise ValueError("at least one acceptance criterion is required")
         if not 0 <= self.priority <= 100:
             raise ValueError("priority must be between 0 and 100")
+        if self.attempt < 1:
+            raise ValueError("attempt must be >= 1")
+        if self.source == APF_SOURCE:
+            required = {
+                "correlation_id": self.correlation_id,
+                "run_id": self.run_id,
+                "requested_by": self.requested_by,
+                "capability_request": self.capability_request,
+                "request_digest": self.request_digest,
+                "policy_snapshot_digest": self.policy_snapshot_digest,
+                "authorization_expires_at": self.authorization_expires_at,
+            }
+            missing = [name for name, value in required.items() if not isinstance(value, str) or not value.strip()]
+            if missing:
+                raise ValueError("APF packet missing required admission identity: " + ", ".join(sorted(missing)))
         if self.state is not PacketState.DRAFT and not self.authorization_ref:
             raise ValueError("non-draft packet requires authorization_ref")
 
