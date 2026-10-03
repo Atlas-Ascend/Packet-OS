@@ -1,0 +1,117 @@
+schema: ghost-atlas.packet-os.apf/v1
+producer: JANUS-ATLAS-PROMPT-FABRIC
+consumer: Packet-OS
+required:
+  - packet_id
+  - correlation_id
+  - run_id
+  - attempt
+  - state
+  - objective
+  - inputs
+  - authority
+  - authorization_ref
+  - request_digest
+  - policy_snapshot_digest
+  - authorization_expires_at
+  - requested_by
+  - capability_request
+  - dependencies
+  - actions
+  - tests
+  - proof
+  - evidence_links
+  - replay_policy
+  - rollback
+  - workforce_handoff
+  - completion_condition
+constraints:
+  atomic: true
+  bounded: true
+  destructive_default: false
+  idempotent_preferred: true
+  explicit_authority_required: true
+  receipt_required: true
+  correlation_immutable: true
+  run_identity_required_before_dispatch: true
+  authorization_request_digest_required: true
+  authorization_policy_snapshot_digest_required: true
+  authorization_expiry_required_before_dispatch: true
+  authorization_requester_identity_required: true
+  dispatch_after_authorization_expiry_forbidden: true
+  workforce_spine_selects_executor: true
+  executor_must_not_be_required_before_workforce_claim: true
+  workforce_handoff_requires_ready_transition_receipt_ref: true
+  replay_requires_same_packet_and_correlation: true
+  replay_must_not_duplicate_completed_effect: true
+  rollback_must_reference_prior_effect_or_artifact: true
+  rollback_receipt_required_when_invoked: true
+  state_transition_receipt_required: true
+lifecycle:
+  authority: Packet-OS.PacketState
+  semantic_projection_only: true
+  initial_semantic: ADMITTED
+  happy_path_semantic_order: [ADMITTED, AUTHORIZED, READY, DISPATCHED, ACKNOWLEDGED, RUNNING, VERIFYING, COMPLETED]
+  failure_semantics: [BLOCKED, FAILED, ROLLED_BACK]
+  native_mapping:
+    ADMITTED: [DRAFT]
+    AUTHORIZED: [AUTHORIZED]
+    READY: [QUEUED]
+    DISPATCHED: [QUEUED]
+    ACKNOWLEDGED: [CLAIMED]
+    RUNNING: [RUNNING]
+    VERIFYING: [REVIEW, VERIFIED]
+    COMPLETED: [COMPLETED]
+    FAILED: [FAILED]
+    BLOCKED: [BLOCKED]
+    ROLLED_BACK: [CANCELLED]
+  mapping_guards:
+    DISPATCHED: workforce_dispatch_receipt_distinguishes_DISPATCHED_from_READY_while_native_state_remains_QUEUED
+    ACKNOWLEDGED: workforce_claim_acknowledgement_required_for_native_CLAIMED_projection
+    VERIFYING: execution_receipt_required_and_native_REVIEW_or_VERIFIED_remains_authoritative
+    ROLLED_BACK: native_CANCELLED_counts_as_ROLLED_BACK_only_with_rollback_receipt_and_compensation_evidence
+  transition_receipt_required:
+    - packet_id
+    - correlation_id
+    - run_id
+    - attempt
+    - from_state
+    - to_state
+    - occurred_at
+    - evidence_ref
+  guards:
+    AUTHORIZED: authorization_ref_request_digest_policy_snapshot_expiry_and_requester_required
+    READY: retry_lineage_required_when_attempt_gt_1
+    DISPATCHED: workforce_handoff_ready_transition_receipt_and_unexpired_authorization_required
+    ACKNOWLEDGED: downstream_ack_required
+    RUNNING: observed_executor_receipt_required
+    VERIFYING: execution_receipt_required
+    COMPLETED: proof_and_downstream_receipts_required
+    ROLLED_BACK: rollback_receipt_and_compensation_evidence_required
+workforce_handoff:
+  required: [packet_id, correlation_id, run_id, attempt, authorization_ref, request_digest, policy_snapshot_digest, authorization_expires_at, requested_by, capability_request, owner, destination, ready_transition_receipt_ref, acknowledgement_required]
+  executor_selected_by: WORKFORCE_SPINE
+  acknowledgement_required: true
+  completion_requires_downstream_receipt: true
+replay_policy:
+  default: deny_after_completed
+  retry_requires_explicit_attempt_and_prior_receipt: true
+  retry_requires_prior_packet_state: [FAILED, BLOCKED]
+  retry_attempt_must_increment: true
+  retry_of_receipt_required_after_first_attempt: true
+  new_effect_requires_new_packet_id: true
+rollback_policy:
+  allowed_from: [FAILED, BLOCKED]
+  requires_prior_effect_or_artifact_ref: true
+  requires_prior_receipt_ref: true
+  requires_compensation_evidence: true
+  native_terminal_state: CANCELLED
+  semantic_projection: ROLLED_BACK
+failure_output:
+  - failed_stage
+  - failed_assertion
+  - artifact
+  - diagnostic_evidence
+  - repair_packet
+  - resume_point
+completion: packet_is_complete_only_when_tests_required_proof_and_downstream_receipts_pass
