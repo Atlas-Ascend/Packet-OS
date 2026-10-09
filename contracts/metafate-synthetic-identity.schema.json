@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Packet OS MetaFate Synthetic Identity Extension",
+  "description": "Optional, non-government synthetic identity extension for simulation packets. Not an SSN or proof of legal identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packet_id",
+    "metafate_id",
+    "identity_kind",
+    "bodygraph_status",
+    "metafate_rate"
+  ],
+  "properties": {
+    "packet_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "metafate_id": {
+      "type": "string",
+      "pattern": "^GA-[0-9]{3}-[0-9]{3}-[0-9]{4}$",
+      "description": "Internal namespace: GA-000-000-0001 through GA-880-000-0000; range validated by allocator."
+    },
+    "identity_kind": {
+      "const": "synthetic_simulation"
+    },
+    "bodygraph_status": {
+      "enum": [
+        "PENDING_BIRTH_DATA",
+        "CALCULATED_UNVERIFIED",
+        "VERIFIED",
+        "WITHHELD"
+      ]
+    },
+    "bodygraph": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Only from authorized birth inputs, with provenance; never invented.",
+      "additionalProperties": true
+    },
+    "metafate_rate": {
+      "type": "null",
+      "description": "Unspecified until canonical scoring formula and audit criteria are approved."
+    },
+    "government_credentials": {
+      "type": "object",
+      "description": "Status flags only; no fabricated SSNs or government-issued documents.",
+      "additionalProperties": {
+        "enum": [
+          "NOT_APPLICABLE",
+          "NOT_ISSUED",
+          "VERIFIED_REFERENCE",
+          "UNKNOWN"
+        ]
+      }
+    },
+    "algorithm_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provenance": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}
