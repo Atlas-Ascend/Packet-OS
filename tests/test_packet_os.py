@@ -57,5 +57,16 @@ class PacketOSTests(unittest.TestCase):
         self.assertEqual(os.bus.history[1].event_type, "packet.state.changed")
 
 
+    def test_sami_janus_packet_os_handoff_is_explicit(self):
+        from pathlib import Path
+
+        wiring = (Path(__file__).resolve().parents[1] / "integration" / "ESTATE_WIRING.yaml").read_text(encoding="utf-8")
+        self.assertIn("consumer: Atlas-Ascend/SAMI", wiring)
+        self.assertIn("contract: janus-authorized-mission/v1", wiring)
+        self.assertIn("consumer: Atlas-Ascend/Packet-OS", wiring)
+        self.assertIn("contract: ghost-atlas/sami-packet/v1", wiring)
+        self.assertIn("SAMI may schedule and coordinate but may not authorize", wiring)
+
+
 if __name__ == "__main__":
     unittest.main()
