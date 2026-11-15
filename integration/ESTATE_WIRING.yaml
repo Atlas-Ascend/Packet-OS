@@ -82,8 +82,23 @@ routes:
     consumer: ProofGrid
     contract: packet-storm-proof-receipt
     condition: state == COMPLETED
+  - producer: Atlas-Ascend/Janus-Prime
+    consumer: Atlas-Ascend/SAMI
+    contract: janus-authorized-mission/v1
+    event: mission.authorized
+    condition: authorization.decision == APPROVED
+    note: JANUS retains sovereign authorization; SAMI performs administrative scheduling only
+  - producer: Atlas-Ascend/SAMI
+    consumer: Atlas-Ascend/Packet-OS
+    contract: ghost-atlas/sami-packet/v1
+    event: sami.schedule.created
+    condition: schedule.state == ACCEPTED
+    note: SAMI emits the administrative envelope; Packet OS persists canonical packet identity and lifecycle
 invariants:
   - JANUS retains executive authorization
+  - SAMI is JANUS's administrative assistant and is not a leadership seat
+  - SAMI may schedule and coordinate but may not authorize, select workers, execute, verify, or promote
+  - GA-001 authorized objectives pass through SAMI scheduling before Packet OS persistence
   - Workforce Spine retains worker selection and worker scheduling policy
   - Packet Storm controls only bounded packet admission and lane capacity
   - CrownGrid retains capability routing
